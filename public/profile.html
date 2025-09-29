@@ -18,5 +18,19 @@
       <p>Visualization of your most practiced topics coming soon...</p>
     </section>
   </div>
+
+    <!-- Shakthi Bot Button -->
+    <div id="shakti-toggle" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">
+      <img src="https://res.cloudinary.com/dwouk4lee/image/upload/v1744485469/download_iigdmt.jpg" alt="Shakthi Bot" style="width: 60px; height: 60px; border-radius: 50%; cursor: pointer;">
+    </div>
+
+    <!-- Shakthi Bot Chat Widget -->
+    <div id="shakti-chat" style="position: fixed; bottom: 100px; right: 20px; width: 350px; height: 400px; background: white; border-radius: 10px; box-shadow: 0 0 15px rgba(0,0,0,0.2); display: none; flex-direction: column; z-index: 1001;">
+      <div id="shakti-header" style="background: #4e54c8; color: white; padding: 15px; border-radius: 10px 10px 0 0; font-weight: bold;">💬 Shakthi Bot</div>
+      <div id="chat-log" style="flex: 1; padding: 15px; overflow-y: auto; font-size: 14px;"></div>
+      <input type="text" id="user-input" placeholder="Ask me about Campus Bridge..." style="padding: 12px; border: 1px solid #ddd; border-radius: 0 0 10px 10px;">
+    </div>
+
+    <script src="shakti-bot.js"></script>
 </body>
 </html>

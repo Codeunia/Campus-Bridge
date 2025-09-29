@@ -8,6 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="styles.css">
   <script src="/app.js"></script>
+  
+  <!-- Google Analytics 4 -->
+  <script src="analytics.js"></script>
 </head>
 
 <body>
@@ -36,8 +39,8 @@
     <h1>“Campus Bridge is the academic & coding revolution I needed.”</h1>
     <p class="quote-source">— Every ambitious student, ever</p>
     <div class="download-buttons">
-      <a href="studentlogin.html" class="btn white  gradient-btn outline-btn">Explore as a Student</a>
-     <!-- <a href="mentorlogin.html" class="btn dark gradient-btn2">Explore as a Faculty</a>-->
+      <a href="studentlogin.html" class="btn white  gradient-btn outline-btn" onclick="exploreAsStudent()">Explore as a Student</a>
+    <!-- <a href="mentorlogin.html" class="btn dark gradient-btn2">Explore as a Faculty</a>-->
     </div>
   </div>
   </section>
@@ -52,12 +55,12 @@
     </div> 
     -->
 
-    <div class="dashboard-card" onclick="window.location.href='freecourses.html'">
+    <div class="dashboard-card" onclick="window.location.href='freecourses.html'; trackNavigation('Free Courses Card')">
       <div class="card-caption">Free Courses</div>
       <img src="https://i.ibb.co/Z6m0Q80K/4-1.jpg" alt="Codelab Arena" />
     </div>
 
-    <div class="dashboard-card" onclick="window.location.href='placement.html'">
+    <div class="dashboard-card" onclick="window.location.href='placement.html'; trackNavigation('Placement Panel Card')">
       <div class="card-caption">Placement Panel</div>
       <img src="https://i.ibb.co/7wcryxn/hostel3.jpg" alt="Placement Panel" />
     </div>
@@ -118,80 +121,128 @@
   </div>
 </section>
 
-<!-- Shakti AI Button -->
-<div id="shakti-toggle">
-  <img src="https://res.cloudinary.com/dwouk4lee/image/upload/v1744485469/download_iigdmt.jpg" alt="Shakti AI">
+<!-- Shakthi Bot Button -->
+<div id="shakti-toggle" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">
+  <img src="https://res.cloudinary.com/dwouk4lee/image/upload/v1744485469/download_iigdmt.jpg" alt="Shakthi Bot" style="width: 60px; height: 60px; border-radius: 50%; cursor: pointer;">
 </div>
 
-<!-- Shakti AI Chat Widget -->
-<div id="shakti-chat">
-  <div id="shakti-header">💬 Shakti AI</div>
-  <div id="chat-log"></div>
-  <input type="text" id="user-input" placeholder="Ask me anything..." />
+<!-- Shakthi Bot Chat Widget -->
+<div id="shakti-chat" style="position: fixed; bottom: 100px; right: 20px; width: 350px; height: 400px; background: white; border-radius: 10px; box-shadow: 0 0 15px rgba(0,0,0,0.2); display: none; flex-direction: column; z-index: 1001;">
+  <div id="shakti-header" style="background: #4e54c8; color: white; padding: 15px; border-radius: 10px 10px 0 0; font-weight: bold;">💬 Shakthi Bot</div>
+  <div id="chat-log" style="flex: 1; padding: 15px; overflow-y: auto; font-size: 14px;"></div>
+  <input type="text" id="user-input" placeholder="Ask me about Campus Bridge..." style="padding: 12px; border: 1px solid #ddd; border-radius: 0 0 10px 10px;">
 </div>
+
+<script src="shakti-bot.js"></script>
 
 <script>
-const chatBox = document.getElementById("shakti-chat");
-    const toggleButton = document.getElementById("shakti-toggle");
-    const chatLog = document.getElementById("chat-log");
-    const inputBox = document.getElementById("user-input");
+function exploreAsStudent() {
+  // Prevent default link behavior
+  event.preventDefault();
+  
+  // Get the button element
+  const button = event.target;
+  
+  // Add animation class to the button
+  button.classList.add('button-click-animation');
+  
+  // Create ripple effect
+  const ripple = document.createElement('span');
+  ripple.classList.add('ripple');
+  ripple.style.width = ripple.style.height = button.offsetWidth + 'px';
+  button.appendChild(ripple);
+  
+  // Fade out the content
+  const heroContent = document.querySelector('.hero-content');
+  heroContent.style.opacity = '0';
+  heroContent.style.transform = 'translateY(20px)';
+  
+  // Add overlay for page transition
+  const overlay = document.createElement('div');
+  overlay.classList.add('page-transition-overlay');
+  document.body.appendChild(overlay);
+  
+  // Track navigation
+  trackNavigation('Explore as Student');
+  
+  // Redirect after animation
+  setTimeout(() => {
+    window.location.href = 'studentlogin.html';
+  }, 800);
+}
 
-    function appendMessage(sender, message) {
-      const messageElem = document.createElement("div");
-      messageElem.innerHTML = `<strong>${sender}:</strong> ${message}`;
-      chatLog.appendChild(messageElem);
-      chatLog.scrollTop = chatLog.scrollHeight;
+// Add CSS for the animations
+const style = document.createElement('style');
+style.innerHTML = `
+  .button-click-animation {
+    animation: buttonClick 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  @keyframes buttonClick {
+    0% {
+      transform: scale(1);
     }
-
-    function showWelcome() {
-      appendMessage("Shakti", `🌸 Welcome! Please type a number to choose an option:<br>
-        1. Who is top in Leaderboard currently?<br>
-        2. How can I contact the administration office?<br>
-        3. Fee Payment Info<br>
-        4. What is Campus Bridge?<br>
-        5. Say Hello<br>
-        6. Who made you?<br>
-        7. Exit Chat`);
+    50% {
+      transform: scale(0.95);
+      box-shadow: 0 0 0 8px rgba(255, 27, 107, 0.3);
     }
-
-    function getResponse(input) {
-      switch (input) {
-        case "1": return "It is Riya Jain";
-        case "2": return "Sure, mail to campusbridge@yahoo.com";
-        case "3": return "You can pay your fee at University Office";
-        case "4": return "Campus Bridge is a platform for students to learn, compete, and grow.";
-        case "5": return "Hello there! How can I assist you today?";
-        case "6": return "I was created by the Campus Bridge team.";
-        case "7": return "Goodbye! 👋";
-        default: return "Please enter a valid number from 1 to 7.";
-      }
+    100% {
+      transform: scale(1);
     }
-
-    toggleButton.addEventListener("click", function () {
-      if (chatBox.style.display === "none") {
-        chatBox.style.display = "flex";
-        chatLog.innerHTML = "";
-        showWelcome();
-      } else {
-        chatBox.style.display = "none";
-      }
-    });
-
-    inputBox.addEventListener("keypress", function (e) {
-      if (e.key === "Enter") {
-        const userInput = inputBox.value.trim();
-        if (!userInput) return;
-
-        appendMessage("You", userInput);
-        const reply = getResponse(userInput);
-        appendMessage("Shakti", reply);
-        inputBox.value = "";
-
-        if (userInput === "7") {
-          chatBox.style.display = "none";
-        }
-      }
-    });
+  }
+  
+  .ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 27, 107, 0.2);
+    transform: scale(0);
+    animation: ripple 0.6s linear;
+    top: 50%;
+    left: 50%;
+    transform-origin: center;
+  }
+  
+  @keyframes ripple {
+    to {
+      transform: translate(-50%, -50%) scale(2.5);
+      opacity: 0;
+    }
+  }
+  
+  .page-transition-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #ff1b6b, #45caff);
+    z-index: 9999;
+    opacity: 0;
+    animation: pageTransition 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+  
+  @keyframes pageTransition {
+    0% {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    70% {
+      opacity: 0.8;
+      transform: scale(1.05);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  .hero-content {
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+`;
+document.head.appendChild(style);
 </script>
 </body>
 </html>

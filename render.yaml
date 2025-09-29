@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: campus-bridge-lms
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+    domains:
+      - campus-bridge-lms.onrender.com
+
+databases:
+  - name: campus-bridge-db
+    plan: free
+    databaseName: lms

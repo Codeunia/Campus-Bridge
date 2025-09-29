@@ -1,11 +1,12 @@
 const mysql = require('mysql2');
 
+// Use Render's environment variables or fallback to local settings
 const connection = mysql.createConnection({
-  host: 'caboose.proxy.rlwy.net',   // Railway Public Host
-  port: 52684,                      // Railway Public Port
-  user: 'root',                     // Railway User
-  password: 'FVbvwMquwHxLDaCnoYPETPTLJEjxgBPb', // Railway Password
-  database: 'railway'               // Railway DB name
+  host: process.env.MYSQL_HOST || process.env.PLANETSCALE_HOST || 'localhost',
+  port: process.env.MYSQL_PORT || 3306,
+  user: process.env.MYSQL_USER || process.env.PLANETSCALE_USER || 'root',
+  password: process.env.MYSQL_PASSWORD || process.env.PLANETSCALE_PASSWORD || '',
+  database: process.env.MYSQL_DATABASE || process.env.PLANETSCALE_DATABASE || 'lms'
 });
 
 connection.connect((err) => {

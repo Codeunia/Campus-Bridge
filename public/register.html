@@ -1,41 +1,230 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <script src="/app.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Mentor Registration | Campus Bridge</title>
+  <title>Register | Campus Bridge</title>
   <link rel="stylesheet" href="register.css" />
+  
+  <style>
+    .error-message {
+      color: #e74c3c;
+      font-size: 14px;
+      margin-top: 5px;
+      display: none;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    .success-message {
+      color: #27ae60;
+      font-size: 14px;
+      margin-top: 15px;
+      display: none;
+    }
+    
+    .info-message {
+      color: #3498db;
+      font-size: 14px;
+      margin-top: 15px;
+      display: none;
+    }
+    
+    /* Add styles for registration success UI */
+    .registration-success {
+      display: none;
+      text-align: center;
+      padding: 30px;
+    }
+    
+    .success-icon {
+      font-size: 48px;
+      color: #27ae60;
+      margin-bottom: 20px;
+    }
+    
+    .login-link {
+      margin-top: 20px;
+      display: inline-block;
+      padding: 10px 20px;
+      background: linear-gradient(to right, #ff1b6b, #45caff);
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
   <div class="mentor-register-container login-wrapper">
-    <div class="mentor-register-card login-box">
+    <div class="mentor-register-card login-box" id="register-form-container">
       <img src="https://res.cloudinary.com/dwouk4lee/image/upload/v1744446605/logo_fopxgl.svg" alt="Campus Bridge Logo" class="logo" />
-      <h2>Create a Account</h2>
-      <form>
-        <div class="input-wrapper">
+      <h2>Create an Account</h2>
+      <form id="registerForm">
+        <div class="form-group">
           <label for="name">Full Name</label>
           <input type="text" id="name" placeholder="Your full name" required />
+          <div id="name-error" class="error-message"></div>
         </div>
-        <div class="input-wrapper">
+        
+        <div class="form-group">
           <label for="email">Email</label>
-          <input type="email" id="email" placeholder="mentor@campusbridge.com" required />
+          <input type="email" id="email" placeholder="student@campusbridge.com" required />
+          <div id="email-error" class="error-message"></div>
         </div>
-        <div class="input-wrapper">
+        
+        <div class="form-group">
           <label for="password">Password</label>
           <input type="password" id="password" placeholder="Create password" required />
+          <div id="password-error" class="error-message"></div>
         </div>
-        <div class="input-wrapper">
+        
+        <div class="form-group">
           <label for="confirm-password">Confirm Password</label>
           <input type="password" id="confirm-password" placeholder="Confirm password" required />
+          <div id="confirm-password-error" class="error-message"></div>
         </div>
-        <button type="submit" class="mentor-btn">Register</button>
+        
+        <div id="register-error" class="error-message"></div>
+        <div id="register-success" class="success-message"></div>
+        <div id="register-info" class="info-message"></div>
+        
+        <button type="submit" id="register-btn" class="mentor-btn">Register</button>
+        
         <div class="mentor-links">
-          <a href="mentor-login.html">Already have an account? Login</a>
+          <a href="studentlogin.html">Already have an account? Login</a>
         </div>
       </form>
     </div>
+    
+    <!-- Registration Success UI -->
+    <div class="registration-success" id="registration-success-container">
+      <div class="success-icon">✓</div>
+      <h2>Registration Successful!</h2>
+      <p>Your account has been created successfully.</p>
+      <p>Please check your email for a verification link.</p>
+      <p>You will be redirected to the login page shortly.</p>
+    </div>
   </div>
+
+  <!-- Shakthi Bot Button -->
+  <div id="shakti-toggle" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">
+    <img src="https://res.cloudinary.com/dwouk4lee/image/upload/v1744485469/download_iigdmt.jpg" alt="Shakthi Bot" style="width: 60px; height: 60px; border-radius: 50%; cursor: pointer;">
+  </div>
+
+  <!-- Shakthi Bot Chat Widget -->
+  <div id="shakti-chat" style="position: fixed; bottom: 100px; right: 20px; width: 350px; height: 400px; background: white; border-radius: 10px; box-shadow: 0 0 15px rgba(0,0,0,0.2); display: none; flex-direction: column; z-index: 1001;">
+    <div id="shakti-header" style="background: #4e54c8; color: white; padding: 15px; border-radius: 10px 10px 0 0; font-weight: bold;">💬 Shakthi Bot</div>
+    <div id="chat-log" style="flex: 1; padding: 15px; overflow-y: auto; font-size: 14px;"></div>
+    <input type="text" id="user-input" placeholder="Ask me about Campus Bridge..." style="padding: 12px; border: 1px solid #ddd; border-radius: 0 0 10px 10px;">
+  </div>
+
+  <script src="shakti-bot.js"></script>
+  
+  <script>
+    document.getElementById("registerForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      
+      // Get form elements
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirm-password').value;
+      const registerBtn = document.getElementById('register-btn');
+      const registerError = document.getElementById('register-error');
+      const registerSuccess = document.getElementById('register-success');
+      const registerInfo = document.getElementById('register-info');
+      
+      // Reset errors and success messages
+      registerError.style.display = 'none';
+      registerSuccess.style.display = 'none';
+      registerInfo.style.display = 'none';
+      document.getElementById('name-error').style.display = 'none';
+      document.getElementById('email-error').style.display = 'none';
+      document.getElementById('password-error').style.display = 'none';
+      document.getElementById('confirm-password-error').style.display = 'none';
+      
+      // Simple validation
+      if (!name) {
+        showError('name-error', 'Name is required');
+        return;
+      }
+      
+      if (!email) {
+        showError('email-error', 'Email is required');
+        return;
+      }
+      
+      if (!password) {
+        showError('password-error', 'Password is required');
+        return;
+      }
+      
+      if (password.length < 6) {
+        showError('password-error', 'Password must be at least 6 characters');
+        return;
+      }
+      
+      if (password !== confirmPassword) {
+        showError('confirm-password-error', 'Passwords do not match');
+        return;
+      }
+      
+      // Disable button and show loading state
+      registerBtn.disabled = true;
+      registerBtn.textContent = 'Registering...';
+      
+      // Send registration request to backend
+      fetch('/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name, email, password })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Show success message
+          registerSuccess.textContent = data.message;
+          registerSuccess.style.display = 'block';
+          
+          // Hide the form and show success UI after a delay
+          setTimeout(() => {
+            // Redirect to login page with success parameter
+            window.location.href = 'studentlogin.html?registered=true';
+          }, 3000);
+        } else {
+          // Show error message
+          registerError.textContent = data.message;
+          registerError.style.display = 'block';
+          
+          // Re-enable button
+          registerBtn.disabled = false;
+          registerBtn.textContent = 'Register';
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        
+        // Show error message
+        registerError.textContent = 'An error occurred. Please try again.';
+        registerError.style.display = 'block';
+        
+        // Re-enable button
+        registerBtn.disabled = false;
+        registerBtn.textContent = 'Register';
+      });
+    });
+    
+    function showError(elementId, message) {
+      const errorElement = document.getElementById(elementId);
+      errorElement.textContent = message;
+      errorElement.style.display = 'block';
+    }
+  </script>
 </body>
 </html>

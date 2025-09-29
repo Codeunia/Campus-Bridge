@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Authentication Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .test-section {
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .test-result {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    
+    button:hover {
+      background-color: #0056b3;
+    }
+    
+    input {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0;
+      box-sizing: border-box;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Authentication System Test</h1>
+  
+  <div class="test-section">
+    <h2>Test Login</h2>
+    <p>Use the test credentials to verify the authentication system:</p>
+    <p><strong>Email:</strong> test@example.com</p>
+    <p><strong>Password:</strong> password123</p>
+    
+    <div>
+      <label for="email">Email:</label>
+      <input type="email" id="email" value="test@example.com">
+    </div>
+    
+    <div>
+      <label for="password">Password:</label>
+      <input type="password" id="password" value="password123">
+    </div>
+    
+    <button onclick="testLogin()">Test Login</button>
+    
+    <div id="login-result" class="test-result" style="display: none;"></div>
+  </div>
+  
+  <div class="test-section">
+    <h2>Check Authentication Status</h2>
+    <button onclick="checkAuth()">Check Authentication</button>
+    <div id="auth-result" class="test-result" style="display: none;"></div>
+  </div>
+  
+  <div class="test-section">
+    <h2>Logout</h2>
+    <button onclick="testLogout()">Logout</button>
+    <div id="logout-result" class="test-result" style="display: none;"></div>
+  </div>
+  
+  <script>
+    function showMessage(elementId, message, isSuccess) {
+      const element = document.getElementById(elementId);
+      element.textContent = message;
+      element.className = 'test-result ' + (isSuccess ? 'success' : 'error');
+      element.style.display = 'block';
+    }
+    
+    function testLogin() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      
+      fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Store session ID in localStorage
+          localStorage.setItem('sessionId', data.sessionId);
+          showMessage('login-result', 'Login successful! Session ID: ' + data.sessionId, true);
+        } else {
+          showMessage('login-result', 'Login failed: ' + data.message, false);
+        }
+      })
+      .catch(error => {
+        showMessage('login-result', 'Error: ' + error.message, false);
+      });
+    }
+    
+    function checkAuth() {
+      const sessionId = localStorage.getItem('sessionId');
+      
+      if (!sessionId) {
+        showMessage('auth-result', 'No session found. Please login first.', false);
+        return;
+      }
+      
+      fetch('/api/auth/check', {
+        headers: {
+          'X-Session-Id': sessionId
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          showMessage('auth-result', 'Authenticated as: ' + data.user.name + ' (' + data.user.email + ')', true);
+        } else {
+          showMessage('auth-result', 'Not authenticated: ' + data.message, false);
+        }
+      })
+      .catch(error => {
+        showMessage('auth-result', 'Error: ' + error.message, false);
+      });
+    }
+    
+    function testLogout() {
+      const sessionId = localStorage.getItem('sessionId');
+      
+      if (!sessionId) {
+        showMessage('logout-result', 'No session found.', false);
+        return;
+      }
+      
+      fetch('/api/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ sessionId: sessionId })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Clear session from localStorage
+          localStorage.removeItem('sessionId');
+          showMessage('logout-result', 'Logout successful!', true);
+        } else {
+          showMessage('logout-result', 'Logout failed: ' + data.message, false);
+        }
+      })
+      .catch(error => {
+        showMessage('logout-result', 'Error: ' + error.message, false);
+      });
+    }
+  </script>
+</body>
+</html>

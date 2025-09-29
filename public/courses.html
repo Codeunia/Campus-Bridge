@@ -7,91 +7,177 @@
   <title>Courses | Campus Bridge</title>
   <link rel="stylesheet" href="common.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+  
+  <!-- Google Analytics 4 -->
+  <script src="analytics.js"></script>
+  
+  <style>
+    #unauthorized-message {
+      text-align: center;
+      padding: 50px;
+      display: none;
+    }
+    
+    #unauthorized-message h2 {
+      color: #e74c3c;
+    }
+    
+    #unauthorized-message a {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #3498db;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+  </style>
 </head>
 <body>
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <div class="logo-section">
-      <h2>Campus Bridge</h2>
+  <div id="unauthorized-message">
+    <h2>Access Denied</h2>
+    <p>You need to be logged in to view this page.</p>
+    <a href="studentlogin.html">Go to Login</a>
+  </div>
+  
+  <div id="main-content" style="display: none;">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="logo-section">
+        <h2>Campus Bridge</h2>
+      </div>
+      <ul class="nav-links">
+        <li><a href="courses.html" onclick="trackNavigation('Courses Link')">Courses</a></li>
+        <li><a href="lectures.html" onclick="trackNavigation('Lectures Link')">Lectures</a></li>
+        <li><a href="assignments.html" onclick="trackNavigation('Assignments Link')">Assignments</a></li>
+        <li><a href="attendance.html" onclick="trackNavigation('Attendance Link')">Attendance</a></li>
+        <li><a href="exams.html" onclick="trackNavigation('Exams Link')">Exams</a></li>
+        <li><a href="timetable.html" onclick="trackNavigation('Timetable Link')">Timetable</a></li>
+        <li><a href="reports.html" onclick="trackNavigation('Reports Link')">Reports</a></li>
+        <li class="logout-btn"><a href="#" onclick="logout()">Logout</a></li>
+      </ul>
     </div>
-    <ul class="nav-links">
-      <li><a href="courses.html"><i class="bi bi-book"></i><span>Courses</span></a></li>
-      <li><a href="lectures.html"><i class="bi bi-easel2"></i><span>Lectures</span></a></li>
-      <li><a href="assignments.html"><i class="bi bi-clipboard-check"></i><span>Assignments</span></a></li>
-      <li><a href="attendance.html"><i class="bi bi-calendar-check"></i><span>Attendance</span></a></li>
-      <li><a href="exams.html"><i class="bi bi-journal-text"></i><span>Exams</span></a></li>
-      <li><a href="timetable.html"><i class="bi bi-clock-history"></i><span>Timetable</span></a></li>
-      <li><a href="reports.html"><i class="bi bi-bar-chart-line"></i><span>Reports</span></a></li>
-      <li class="logout-btn"><a href="logout.html"><i class="bi bi-box-arrow-right"></i><span>Logout</span></a></li>
-    </ul>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <header>
+          <div class="welcome-message">
+              <h1>Welcome <span id="username"></span>!</h1>
+            </div>
+        <h1><i class="bi bi-book-half"></i> Your Enrolled Courses</h1>
+      </header>
+
+      <section class="card-grid">
+        <div class="card" onclick="trackCourseInteraction('Database Management Systems', 'Card Clicked')">
+          <h3><i class="bi bi-database-fill-gear"></i> Database Management Systems </h3>
+          <p>Instructor: Dr. Sameer Sheikh</p>
+          <p>Credits: 4 | Semester: V</p>
+          <p>Relational modeling, SQL, indexing, normalization, and transactions.</p>
+        </div>
+
+        <div class="card" onclick="trackCourseInteraction('Operating Systems', 'Card Clicked')">
+          <h3><i class="bi bi-cpu-fill"></i> Operating Systems</h3>
+          <p>Instructor: Prof. Nidhi Rao</p>
+          <p>Credits: 3 | Semester: V</p>
+          <p>Process/thread management, memory, file systems, and concurrency control.</p>
+        </div>
+
+        <div class="card" onclick="trackCourseInteraction('Web Development', 'Card Clicked')">
+          <h3><i class="bi bi-code-square"></i> Web Development</h3>
+          <p>Instructor: Mrs. Pallavi Gupta</p>
+          <p>Credits: 2 | Semester: V</p>
+          <p>HTML, CSS, JavaScript, and backend technologies like Node.js covered.</p>
+        </div>
+
+        <div class="card" onclick="trackCourseInteraction('Data Structures & Algorithms', 'Card Clicked')">
+          <h3><i class="bi bi-bar-chart-steps"></i> Data Structures & Algorithms</h3>
+          <p>Instructor: Mr. Neeraj Patil</p>
+          <p>Credits: 3 | Semester: V</p>
+          <p>In-depth coverage of arrays, trees, recursion, graphs, sorting & searching.</p>
+        </div>
+
+        <div class="card" onclick="trackCourseInteraction('Computer Networks', 'Card Clicked')">
+          <h3><i class="bi bi-pc-display"></i> Computer Networks</h3>
+          <p>Instructor: Prof. Kavita Mishra</p>
+          <p>Credits: 3 | Semester: V</p>
+          <p>Network Types, OSI Model, TCP/IP Model, IP Addressing, Routing & Switching. </p>
+        </div>
+      </section>
+    </div>
   </div>
 
-  <!-- Main Content -->
-  <div class="main-content">
-    <header>
-        <div class="welcome-message">
-            <h1>Welcome Achiever<span id="username"></span>!</h1>
-          </div>
-      <h1><i class="bi bi-book-half"></i> Your Enrolled Courses</h1>
-    </header>
-
-    <!--<section class="card-grid">
-      <div class="card">
-        <h3><i class="bi bi-hdd-network"></i> Network & Mobile Programming</h3>
-        <p>Instructor: Prof. Raghav Menon</p>
-        <p>Credits: 4 | Semester: VI</p>
-        <p>Explore topics in networking, wireless protocols, and app development.</p>
-      </div>-->
-
-      <!--<div class="card">
-        <h3><i class="bi bi-diagram-3"></i> Software Engineering</h3>
-        <p>Instructor: Dr. Anjali Bose</p>
-        <p>Credits: 3 | Semester: V</p>
-        <p>SDLC, Agile, Requirement Gathering, and UML modeling covered in depth.</p>
-      </div>-->
-
-      <div class="card">
-        <h3><i class="bi bi-database-fill-gear"></i> Database Management Systems </h3>
-        <p>Instructor: Dr. Sameer Sheikh</p>
-        <p>Credits: 4 | Semester: V</p>
-        <p>Relational modeling, SQL, indexing, normalization, and transactions.</p>
-      </div>
-
-      <div class="card">
-        <h3><i class="bi bi-cpu-fill"></i> Operating Systems</h3>
-        <p>Instructor: Prof. Nidhi Rao</p>
-        <p>Credits: 3 | Semester: V</p>
-        <p>Process/thread management, memory, file systems, and concurrency control.</p>
-      </div>
-
-      <!--<div class="card">
-        <h3><i class="bi bi-brain"></i> Artificial Intelligence</h3>
-        <p>Instructor: Dr. Mehul Jain</p>
-        <p>Credits: 4 | Semester: V</p>
-        <p>AI principles, search strategies, logic, and ML foundations.</p>
-      </div>-->
-
-      <div class="card">
-        <h3><i class="bi bi-code-square"></i> Web Development</h3>
-        <p>Instructor: Mrs. Pallavi Gupta</p>
-        <p>Credits: 2 | Semester: V</p>
-        <p>HTML, CSS, JavaScript, and backend technologies like Node.js covered.</p>
-      </div>
-
-      <div class="card">
-        <h3><i class="bi bi-bar-chart-steps"></i> Data Structures & Algorithms</h3>
-        <p>Instructor: Mr. Neeraj Patil</p>
-        <p>Credits: 3 | Semester: V</p>
-        <p>In-depth coverage of arrays, trees, recursion, graphs, sorting & searching.</p>
-      </div>
-
-      <div class="card">
-        <h3><i class="bi bi-pc-display"></i> Computer Networks</h3>
-        <p>Instructor: Prof. Kavita Mishra</p>
-        <p>Credits: 3 | Semester: V</p>
-        <p>Network Types, OSI Model, TCP/IP Model, IP Addressing, Routing & Switching. </p>
-      </div>
-    </section>
+  <script>
+    // Check if user is authenticated when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      const sessionId = localStorage.getItem('sessionId');
+      
+      if (!sessionId) {
+        // Show unauthorized message
+        document.getElementById('unauthorized-message').style.display = 'block';
+        return;
+      }
+      
+      // Check session with backend
+      fetch('/api/auth/check', {
+        headers: {
+          'X-Session-Id': sessionId
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // User is authenticated, show main content
+          document.getElementById('main-content').style.display = 'block';
+          document.getElementById('username').textContent = data.user.name;
+        } else {
+          // Invalid session, show unauthorized message
+          document.getElementById('unauthorized-message').style.display = 'block';
+          // Clear session from localStorage
+          localStorage.removeItem('sessionId');
+        }
+      })
+      .catch(error => {
+        console.error('Error checking authentication:', error);
+        // Show unauthorized message in case of error
+        document.getElementById('unauthorized-message').style.display = 'block';
+      });
+    });
+    
+    // Logout function
+    function logout() {
+      const sessionId = localStorage.getItem('sessionId');
+      
+      if (sessionId) {
+        // Notify backend about logout
+        fetch('/api/logout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ sessionId: sessionId })
+        });
+        
+        // Clear session from localStorage
+        localStorage.removeItem('sessionId');
+      }
+      
+      // Redirect to login page
+      window.location.href = 'studentlogin.html';
+    }
+  </script>
+  
+  <!-- Shakthi Bot Button -->
+  <div id="shakti-toggle" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">
+    <img src="https://res.cloudinary.com/dwouk4lee/image/upload/v1744485469/download_iigdmt.jpg" alt="Shakthi Bot" style="width: 60px; height: 60px; border-radius: 50%; cursor: pointer;">
   </div>
+
+  <!-- Shakthi Bot Chat Widget -->
+  <div id="shakti-chat" style="position: fixed; bottom: 100px; right: 20px; width: 350px; height: 400px; background: white; border-radius: 10px; box-shadow: 0 0 15px rgba(0,0,0,0.2); display: none; flex-direction: column; z-index: 1001;">
+    <div id="shakti-header" style="background: #4e54c8; color: white; padding: 15px; border-radius: 10px 10px 0 0; font-weight: bold;">💬 Shakthi Bot</div>
+    <div id="chat-log" style="flex: 1; padding: 15px; overflow-y: auto; font-size: 14px;"></div>
+    <input type="text" id="user-input" placeholder="Ask me about Campus Bridge..." style="padding: 12px; border: 1px solid #ddd; border-radius: 0 0 10px 10px;">
+  </div>
+
+  <script src="shakti-bot.js"></script>
 </body>
 </html>

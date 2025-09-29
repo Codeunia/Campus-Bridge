@@ -7,6 +7,36 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Student Login – Campus Bridge</title>
   <link rel="stylesheet" href="studentlogin.css" />
+  
+  <!-- Google Analytics 4 -->
+  <script src="analytics.js"></script>
+  
+  <style>
+    .error-message {
+      color: #e74c3c;
+      font-size: 14px;
+      margin-top: 5px;
+      display: none;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    .success-message {
+      color: #27ae60;
+      font-size: 14px;
+      margin-top: 15px;
+      display: none;
+    }
+    
+    .info-message {
+      color: #3498db;
+      font-size: 14px;
+      margin-top: 15px;
+      display: none;
+    }
+  </style>
 </head>
 <body>
   <div class="login-wrapper">
@@ -16,9 +46,21 @@
       <p class="subtitle">Login to unlock your academic superpowers.</p>
 
       <form id="loginForm">
-        <input type="email" placeholder="Email Address" required />
-        <input type="password" placeholder="Password" required />
-        <button type="submit">Login</button>
+        <div class="form-group">
+          <input type="email" id="email" placeholder="Email Address" required />
+          <div id="email-error" class="error-message"></div>
+        </div>
+        
+        <div class="form-group">
+          <input type="password" id="password" placeholder="Password" required />
+          <div id="password-error" class="error-message"></div>
+        </div>
+        
+        <div id="login-error" class="error-message"></div>
+        <div id="login-success" class="success-message"></div>
+        <div id="login-info" class="info-message"></div>
+        
+        <button type="submit" id="login-btn">Login</button>
       </form>
 
       <div class="links">
@@ -29,11 +71,141 @@
   </div>
 
   <script>
+    // Check if there's a registration success message in the URL
+    window.addEventListener('DOMContentLoaded', function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const registered = urlParams.get('registered');
+      const verified = urlParams.get('verified');
+      
+      if (registered === 'true') {
+        const successElement = document.getElementById('login-success');
+        successElement.textContent = 'Registration successful! Please check your email for verification link.';
+        successElement.style.display = 'block';
+        
+        // Auto-hide the message after 10 seconds
+        setTimeout(() => {
+          successElement.style.display = 'none';
+        }, 10000);
+      }
+      
+      if (verified === 'true') {
+        const successElement = document.getElementById('login-success');
+        successElement.textContent = 'Email verified successfully! You can now login with your credentials.';
+        successElement.style.display = 'block';
+        
+        // Auto-hide the message after 5 seconds
+        setTimeout(() => {
+          successElement.style.display = 'none';
+        }, 5000);
+      }
+    });
+
     document.getElementById("loginForm").addEventListener("submit", function (e) {
       e.preventDefault();
-      alert("🎉 You're logged in!");
-      window.location.href = "courses.html"; // Redirect to a dashboard
+      
+      // Get form elements
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const loginBtn = document.getElementById('login-btn');
+      const loginError = document.getElementById('login-error');
+      const loginSuccess = document.getElementById('login-success');
+      const loginInfo = document.getElementById('login-info');
+      
+      // Reset errors and success messages
+      loginError.style.display = 'none';
+      loginSuccess.style.display = 'none';
+      loginInfo.style.display = 'none';
+      
+      // Track login attempt
+      trackAuthEvent('login_attempt', 'Student Login Attempt');
+      
+      // Simple validation
+      if (!email) {
+        showError('email-error', 'Email is required');
+        return;
+      }
+      
+      if (!password) {
+        showError('password-error', 'Password is required');
+        return;
+      }
+      
+      // Disable button and show loading state
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'Logging in...';
+      
+      // Send login request to backend
+      fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Store session ID in localStorage
+          localStorage.setItem('sessionId', data.sessionId);
+          
+          // Track successful login
+          trackAuthEvent('login_success', 'Student Login Success');
+          
+          // Show success message
+          loginSuccess.textContent = "🎉 Login successful! Redirecting...";
+          loginSuccess.style.display = 'block';
+          
+          // Redirect to courses page after a short delay
+          setTimeout(() => {
+            window.location.href = "courses.html";
+          }, 1500);
+        } else {
+          // Track failed login
+          trackAuthEvent('login_failed', 'Student Login Failed: ' + data.message);
+          
+          // Show error message
+          loginError.textContent = data.message;
+          loginError.style.display = 'block';
+          
+          // Re-enable button
+          loginBtn.disabled = false;
+          loginBtn.textContent = 'Login';
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        // Track error
+        trackAuthEvent('login_error', 'Student Login Error: ' + error.message);
+        
+        // Show error message
+        loginError.textContent = 'An error occurred. Please try again.';
+        loginError.style.display = 'block';
+        
+        // Re-enable button
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'Login';
+      });
     });
+    
+    function showError(elementId, message) {
+      const errorElement = document.getElementById(elementId);
+      errorElement.textContent = message;
+      errorElement.style.display = 'block';
+    }
   </script>
+  
+  <!-- Shakthi Bot Button -->
+  <div id="shakti-toggle" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">
+    <img src="https://res.cloudinary.com/dwouk4lee/image/upload/v1744485469/download_iigdmt.jpg" alt="Shakthi Bot" style="width: 60px; height: 60px; border-radius: 50%; cursor: pointer;">
+  </div>
+
+  <!-- Shakthi Bot Chat Widget -->
+  <div id="shakti-chat" style="position: fixed; bottom: 100px; right: 20px; width: 350px; height: 400px; background: white; border-radius: 10px; box-shadow: 0 0 15px rgba(0,0,0,0.2); display: none; flex-direction: column; z-index: 1001;">
+    <div id="shakti-header" style="background: #4e54c8; color: white; padding: 15px; border-radius: 10px 10px 0 0; font-weight: bold;">💬 Shakthi Bot</div>
+    <div id="chat-log" style="flex: 1; padding: 15px; overflow-y: auto; font-size: 14px;"></div>
+    <input type="text" id="user-input" placeholder="Ask me about Campus Bridge..." style="padding: 12px; border: 1px solid #ddd; border-radius: 0 0 10px 10px;">
+  </div>
+
+  <script src="shakti-bot.js"></script>
 </body>
 </html>
